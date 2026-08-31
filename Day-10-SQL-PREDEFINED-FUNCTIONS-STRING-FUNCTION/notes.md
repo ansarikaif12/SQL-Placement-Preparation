@@ -470,8 +470,8 @@ CHAR_LENGTH() use karenge, kyunki hume actual visible characters count karne hot
 Example
 SELECT LENGTH('😊');       -- 4 (bytes)
 SELECT CHAR_LENGTH('😊');  -- 1 (character)
-SELECT LENGTH('भारत');       -- 15 (bytes)
-SELECT CHAR_LENGTH('भारत');  -- 5 (characters) -->
+SELECT LENGTH('भारत');       -- 12 (bytes)
+SELECT CHAR_LENGTH('भारत');  -- 4 (characters) -->
 
 ==============================================
 <!-- 

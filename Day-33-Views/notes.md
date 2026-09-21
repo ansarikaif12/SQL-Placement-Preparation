@@ -226,3 +226,144 @@ Bas ek basic rule:
 View = kisi SELECT query ko naam dekar save karna.
 
 Isliye WHERE View ki requirement nahi hai, sirf filtering ke liye hai. -->
+
+
+
+<!-- Haan, ye bahut important concept hai. Isko clear kar lete hain. 🔥
+
+Sabse pehle ek distinction:
+
+Base table ko change karna aur View ko change karna alag cheezein hain.
+
+Maan lo:
+
+CREATE VIEW high_salary_employees AS
+SELECT *
+FROM employees_table
+WHERE salary > 60000;
+1. Base Table me UPDATE karo
+
+Suppose:
+
+UPDATE employees_table
+SET salary = 55000
+WHERE emp_id = 103;
+
+Sara ki salary 65000 → 55000 ho gayi.
+
+Ab:
+
+SELECT *
+FROM high_salary_employees;
+
+Sara View se disappear ho jayegi ❗
+
+Kyunki View ki condition hai:
+
+salary > 60000
+
+Aur ab Sara ki salary 55000 hai.
+
+So:
+
+Base table UPDATE → View ka result automatically change ho sakta hai. ✅
+
+2. Base Table me DELETE karo
+DELETE FROM employees_table
+WHERE emp_id = 103;
+
+Sara base table se delete ho gayi.
+
+Ab:
+
+SELECT *
+FROM high_salary_employees;
+
+Sara View me bhi nahi milegi.
+
+So:
+
+Base table DELETE → View se bhi woh row disappear ho jayegi. ✅
+
+Because View underlying table ka current data show karta hai.
+
+3. Base Table me ALTER karo
+
+Yahan thoda different hai.
+
+Suppose:
+
+ALTER TABLE employees_table
+ADD email VARCHAR(100);
+
+Base table me email column add ho gaya.
+
+Agar tumhara View explicitly ye tha:
+
+CREATE VIEW high_salary_employees AS
+SELECT emp_id, name, salary
+FROM employees_table
+WHERE salary > 60000;
+
+To View me email automatically nahi aa jayega, because View ki query me email select hi nahi kiya gaya.
+
+4. View ko UPDATE karna
+
+Kuch Views updatable hote hain.
+
+Example:
+
+CREATE VIEW it_employees AS
+SELECT emp_id, name, salary
+FROM employees_table
+WHERE department = 'IT';
+
+Agar View updatable hai, to:
+
+UPDATE it_employees
+SET salary = 75000
+WHERE emp_id = 106;
+
+Iska effect underlying employees_table par bhi padega.
+
+Yaani:
+
+UPDATE VIEW
+     ↓
+Underlying Table UPDATE
+
+⚠️ Lekin har View updatable nahi hota. JOIN, GROUP BY, aggregate etc. wale Views generally directly updateable nahi hote.
+
+5. View ko DELETE karna
+
+Agar tum:
+
+DROP VIEW high_salary_employees;
+
+karte ho:
+
+Kya hoga?
+
+❌ employees_table delete nahi hogi.
+
+❌ Employees ka actual data delete nahi hoga.
+
+✅ Sirf View delete hoga.
+
+DROP VIEW
+    ↓
+View deleted
+    ↓
+Base table safe ✅
+🔥 Ye difference yaad rakho
+Operation	Effect
+UPDATE employees_table	View ka result change ho sakta hai
+DELETE FROM employees_table	View se row disappear ho sakti hai
+ALTER employees_table	View par depend karta hai
+UPDATE view	Agar updatable hai → base table change
+DROP VIEW	Sirf View delete, base table safe
+⭐ Interview line:
+
+A normal View does not store a separate copy of the data. Therefore, changes to the underlying table are generally reflected when the View is queried. Dropping the View does not delete the underlying table or its data.
+
+Bas View ko delete karna (DROP VIEW) ≠ View ke through data delete karna (DELETE) — ye distinction interview me important hai. -->

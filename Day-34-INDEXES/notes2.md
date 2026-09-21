@@ -211,3 +211,82 @@ salary ko include karta hai ✅
 Column order matters ✅
 Table ke actual rows ko permanently sort nahi karta ❌
 Koi column delete nahi karta ❌
+
+
+ye btao agar composite indexes hai department, salary to ham where salary>6000 nhi kr skte ?
+
+Haan, query bilkul kar sakte ho:
+
+SELECT *
+FROM employees_table
+WHERE salary > 60000;
+
+❗ Bas difference ye hai ki query kar sakte ho ≠ composite index ka full benefit milega.
+
+Agar index hai:
+
+CREATE INDEX idx_dept_salary
+ON employees_table(department, salary);
+
+To index ka order hai:
+
+department → salary
+Case 1: Department + Salary ✅
+WHERE department = 'IT'
+AND salary > 60000
+
+Yahan index naturally aligned hai:
+
+department = IT
+       ↓
+salary > 60000
+Case 2: Sirf Salary
+WHERE salary > 60000
+
+Ye valid SQL hai ✅
+
+Lekin composite index (department, salary) ka use salary ko independently filter karne ke liye generally efficient starting point nahi hai, kyunki department first column hai.
+
+Simple example
+
+Socho index:
+
+(department, salary)
+
+jaise dictionary:
+
+IT       → 50000, 55000, 65000, 70000
+Finance  → 75000, 80000
+HR       → 35000, 40000, 45000
+Sales    → 42000, 45000, 48000
+
+Agar tum bolo:
+
+department = IT
+
+to database relevant section par directly focus kar sakta hai.
+
+Lekin agar bolo:
+
+salary > 60000
+
+to salary values different departments ke andar scattered hain. Isliye (department, salary) index salary-only search ke liye naturally suited nahi hai.
+
+Agar salary-only query bahut frequent hai
+
+Separate index bana sakte ho:
+
+CREATE INDEX idx_salary
+ON employees_table(salary);
+
+Then:
+
+SELECT *
+FROM employees_table
+WHERE salary > 60000;
+
+salary index ke saath aligned hoga. ✅
+
+Interview line:
+
+Composite index (department, salary) salary-only query ko prohibit nahi karta; query chalti hai, but the index is not naturally aligned for salary-only filtering because department is the leading column.

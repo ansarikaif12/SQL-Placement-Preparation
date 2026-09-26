@@ -478,10 +478,8 @@ A structured SQL learning and practice journey focused on **placements, technica
 - [x] Window Functions
 - [x] Set Operations
 - [x] Transactions
-- [ ] Stored Procedures
-- [ ] Triggers
-- [ ] Company-Level SQL Questions
-- [ ] SQL Mock Interview
+- [x] Company-Level SQL Questions
+- [x] SQL Mock Interview
 
 ---
 

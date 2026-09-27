@@ -410,3 +410,59 @@ DENSE_RANK()
 CTE + Window Function
 Top 1 / Top 2
 Highest / Lowest salary
+
+
+
+
+
+Exactly — ROW_NUMBER() mein SQL ko ek ordering rule chahiye hota hai. Sirf salary same hai toh database ke paas naturally koi reason nahi hota ki pehle employee ko 1 aur doosre ko 2 kyun de.
+
+Example
+SELECT
+    name,
+    salary,
+    ROW_NUMBER() OVER(ORDER BY salary DESC) AS row_num
+FROM employees_table;
+
+Agar:
+
+Aman   50000
+Ankit  50000
+Sara   40000
+
+Toh Aman ko 1 aur Ankit ko 2 milna guaranteed nahi hai. Database kisi bhi order mein un dono ko number de sakta hai.
+
+Agar tum fixed/consistent order chahte ho 👇
+
+Salary ke baad emp_id ko tie-breaker bana do:
+
+SELECT
+    name,
+    salary,
+    ROW_NUMBER() OVER(
+        ORDER BY salary DESC, emp_id ASC
+    ) AS row_num
+FROM employees_table;
+
+Ab:
+
+Aman   50000   emp_id 101 → 1
+Ankit  50000   emp_id 111 → 2
+Sara   40000   emp_id 103 → 3
+
+Because:
+
+salary DESC → higher salary first
+emp_id ASC  → same salary mein smaller emp_id first
+🧠 Bas itna yaad rakho
+
+ROW_NUMBER() khud decide nahi karta ki same salary mein kaun 1 aur kaun 2 hoga.
+
+Jo columns tum ORDER BY mein doge, unhi ke basis par order decide hoga.
+
+ROW_NUMBER() OVER(
+    ORDER BY salary DESC, emp_id ASC
+)
+
+👉 Salary = primary ordering
+👉 emp_id = tie-breaker
